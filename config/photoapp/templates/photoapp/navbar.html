@@ -32,6 +32,18 @@
         <li>&emsp;&emsp;</li>
 
         <li class="nav-item">
+          <a class="nav-link active h6" href="{% url 'photo:tagged_tags' 'no' %}">未标记</a>
+        </li>
+
+        <li>&emsp;&emsp;</li>
+
+        <li class="nav-item">
+          <a class="nav-link active h6" href="{% url 'photo:tagged_tags' 'yes' %}">已标记</a>
+        </li>
+
+        <li>&emsp;&emsp;</li>
+
+        <li class="nav-item">
           <a class="nav-link active h6" href="{% url 'photo:create' %}">添加</a>
         </li>
 

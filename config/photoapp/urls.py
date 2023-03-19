@@ -10,13 +10,16 @@ from .views import (
     PhotoDeleteView,
     TagListView,
     PhotoListView,
-    yes_no_tag
+    yes_no_tag,
+    TaggedTagListView
 )
 
 app_name = 'photo'
 
 urlpatterns = [
     path('', TagListView.as_view(), name='tags'),
+
+    path('tagged/tags/<str:flag>/', TaggedTagListView.as_view(), name='tagged_tags'),
 
     path('tag/<slug:tag>/', PhotoTagListView.as_view(), name='tag'),
 

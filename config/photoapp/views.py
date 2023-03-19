@@ -76,6 +76,22 @@ class TagListView(ListView):
         return context
 
 
+class TaggedTagListView(TagListView):
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tags = []
+        for tag_info in context['tags']:
+            if self.kwargs['flag'] == 'yes' and tag_info['yes_no_tag'] != '':
+                tags.append(tag_info)
+            elif self.kwargs['flag'] == 'no' and tag_info['yes_no_tag'] == '':
+                tags.append(tag_info)
+
+        context['tags'] = tags
+        return context
+
+
+
 class PhotoDetailView(DetailView):
     model = Photo
 
