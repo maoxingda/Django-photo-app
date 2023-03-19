@@ -30,14 +30,20 @@
                         data: JSON.stringify({
                             tag: 'shi',
                             photos: photos
-                        })
+                        }),
+                        success: function () {
+                            location.pathname = '/tagged/tags/no/';
+                        }
                     });
                 } else {
                     $.post($(this).attr('href'), {
                         data: JSON.stringify({
                             tag: 'fou',
                             photos: photos
-                        })
+                        }),
+                        success: function () {
+                            location.pathname = '/tagged/tags/no/';
+                        }
                     });
                 }
             });

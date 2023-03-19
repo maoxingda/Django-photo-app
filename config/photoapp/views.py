@@ -91,7 +91,6 @@ class TaggedTagListView(TagListView):
         return context
 
 
-
 class PhotoDetailView(DetailView):
     model = Photo
 
