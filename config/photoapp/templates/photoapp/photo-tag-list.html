@@ -3,9 +3,45 @@
 {% block body %}
 
     <div class="alert alert-primary">
-        <h2 class="text-center">{{ tag }}</h2>
+        <div class="row">
+            <div class="col-md-4 col-md-4 col-md-4 h3">
+                {{ tag }}
+            </div>
+            <div class="col-md-4 col-md-4 col-md-4 h3">
+                <a id="id-tag-shi" href="{% url 'photo:yes-no-tag' %}" onclick="return false;" class="mb-4 h-100">是</a>
+            </div>
+            <div class="col-md-4 col-md-4 col-md-4 h3">
+                <a id="id-tag-fou" href="{% url 'photo:yes-no-tag' %}" onclick="return false;" class="mb-4 h-100">否</a>
+            </div>
+        </div>
     </div>
 
     {{ block.super }}
+
+    <script>
+        $(function () {
+            $('#id-tag-shi, #id-tag-fou').click(function () {
+                let photos = []
+                $('input[name="photo-id"]').each(function () {
+                    photos.push(parseInt($(this).val()));
+                });
+                if (this.id === 'id-tag-shi') {
+                    $.post($(this).attr('href'), {
+                        data: JSON.stringify({
+                            tag: 'shi',
+                            photos: photos
+                        })
+                    });
+                } else {
+                    $.post($(this).attr('href'), {
+                        data: JSON.stringify({
+                            tag: 'fou',
+                            photos: photos
+                        })
+                    });
+                }
+            });
+        });
+    </script>
 
 {% endblock body %}

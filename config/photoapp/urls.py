@@ -9,7 +9,8 @@ from .views import (
     PhotoUpdateView,
     PhotoDeleteView,
     TagListView,
-    PhotoListView
+    PhotoListView,
+    yes_no_tag
 )
 
 app_name = 'photo'
@@ -24,6 +25,8 @@ urlpatterns = [
     path('photo/create/', PhotoCreateView.as_view(), name='create'),
 
     path('photo/<int:pk>/update/', PhotoUpdateView.as_view(), name='update'),
+
+    path('photo/yes_no_tag/update/', yes_no_tag, name='yes-no-tag'),
 
     path('photo/<int:pk>/delete/', PhotoDeleteView.as_view(), name='delete'),
 

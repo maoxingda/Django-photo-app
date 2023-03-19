@@ -17,8 +17,10 @@
         <div class="col-md-2">
             <ul class="list-group list-group-horizontal-lg list-unstyled py-4">
                 {% for tag in photo.tags.all %}
-                    <li><a href="{% url 'photo:tag' tag.slug %}"
-                           class="btn btn-sm list-group-item list-group-item-primary">{{ tag.name }}</a></li>
+                    {% if tag.slug != 'shi' and tag.slug != 'fou' %}
+                        <li><a href="{% url 'photo:tag' tag.slug %}"
+                               class="btn btn-sm list-group-item list-group-item-primary">{{ tag.name }}</a></li>
+                    {% endif %}
                 {% endfor %}
             </ul>
         </div>

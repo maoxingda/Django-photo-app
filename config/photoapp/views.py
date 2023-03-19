@@ -1,12 +1,14 @@
 """Photo app generic views"""
+import json
 from copy import copy
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.datastructures import MultiValueDict
+from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .forms import PhotoModelForm
@@ -43,16 +45,32 @@ class PhotoTagListView(PhotoListView):
 
 
 class TagListView(ListView):
-    model = CnTaggedItem
+    model = CnTag
     template_name = 'photoapp/tag-list.html'
     context_object_name = 'tags'
 
     def get_context_data(self, **kwargs):
+        queryset = CnTag.objects.prefetch_related('taggit_taggeditem_items')
         context = super().get_context_data(**kwargs)
-        tags = set()
+        tags = []
 
-        for tag_item in self.get_queryset():
-            tags.add(tag_item.tag)
+        for tag in queryset:
+            if tag.slug == 'shi' or tag.slug == 'fou':
+                continue
+            if tag.taggit_taggeditem_items.exists():
+                object_id = tag.taggit_taggeditem_items.first().object_id
+                yes_tag = Photo.objects.get(id=object_id).tags.filter(slug='shi').exists()
+                no_tag = Photo.objects.get(id=object_id).tags.filter(slug='fou').exists()
+                if yes_tag:
+                    yn_tag = CnTag.objects.get(slug='shi')
+                elif no_tag:
+                    yn_tag = CnTag.objects.get(slug='fou')
+                else:
+                    yn_tag = ''
+                tags.append({
+                    'tag': tag,
+                    'yes_no_tag': yn_tag,
+                })
 
         context['tags'] = tags
         return context
@@ -134,6 +152,20 @@ class PhotoUpdateView(UserIsSubmitter, UpdateView):
     fields = ['title', 'description', 'tags']
 
     success_url = reverse_lazy('photo:tags')
+
+
+@csrf_exempt
+def yes_no_tag(request):
+    data = json.loads(request.POST['data'])
+    tag = CnTag.objects.get(slug=data['tag'])
+    yes_tag = CnTag.objects.get(slug='shi')
+    no_tag = CnTag.objects.get(slug='fou')
+    photos = Photo.objects.filter(id__in=data['photos'])
+    for photo in photos:
+        photo.tags.remove(yes_tag, no_tag)
+        photo.tags.add(tag)
+
+    return HttpResponse()
 
 
 class PhotoDeleteView(UserIsSubmitter, DeleteView):
