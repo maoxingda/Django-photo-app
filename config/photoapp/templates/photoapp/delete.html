@@ -1,14 +1,14 @@
-{% extends 'base.html' %} 
+{% extends 'photoapp/base.html' %}
 
 {% block body %}
 <div class="form-group mx-auto">
   <h2 class="text-center">
-    You are going to <span class="text-danger">delete</span>: "<i
+    您正在 <span class="text-danger">删除</span>: "<i
       >{{ photo }}</i
     >
     "
   </h2>
-  <p class="text-center">Are you sure, you want to delete the photo ?</p>
+  <p class="text-center">确定要删除么 ?</p>
   <div class="form-group">
     <form
       action=""
@@ -19,14 +19,14 @@
       <div class="row">
         <div class="col">
           <a href="{% url 'photo:detail' photo.id %}" class="btn btn-primary"
-            >Cancel</a
+            >取消</a
           >
         </div>
         <div class="col">
-          <button type="submit" class="btn btn-danger">Delete</button>
+          <button type="submit" class="btn btn-danger">确定</button>
         </div>
       </div>
-      <p>This action is irreversible</p>
+      <p>删除操作不可撤销</p>
     </form>
   </div>
 </div>

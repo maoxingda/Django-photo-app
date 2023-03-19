@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md navbar-dark bg-dark">
   <div class="container-fluid">
-    <a class="navbar-brand" href="{% url 'photo:list' %}">Photo App</a>
+    <a class="navbar-brand" href="{% url 'photo:tags' %}">{{user.username}} 的相册</a>
     <button
       class="navbar-toggler"
       type="button"
@@ -13,23 +13,23 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div
-      class="collapse navbar-collapse flex-row-reverse"
+      class="collapse navbar-collapse"
       id="navbarTogglerDemo02"
     >
       <ul class="navbar-nav">
         {% if user.is_authenticated %}
 
         <li class="nav-item">
-          <a class="nav-link active" href="{% url 'photo:create' %}">Add a photo</a>
+          <a class="nav-link active" href="{% url 'photo:create' %}">添加</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="#">Hi {{user.username}}</a>
-        </li>
+{#        <li class="nav-item">#}
+{#          <a class="nav-link active" href="#">哈喽 {{user.username}}</a>#}
+{#        </li>#}
         {% else %}
 
         <li class="nav-item">
           <a href="{% url 'user:login' %}" class="btn btn-sm btn-danger"
-            >Sign In</a
+            >登录</a
           >
         </li>
         {% endif %}

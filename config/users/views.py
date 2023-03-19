@@ -14,7 +14,7 @@ class SignUpView(CreateView):
     
     form_class = UserCreationForm
 
-    success_url = reverse_lazy('photo:list')
+    success_url = reverse_lazy('photo:tags')
 
     def form_valid(self, form):
         to_return = super().form_valid(form)

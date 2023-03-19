@@ -1,0 +1,11 @@
+{% extends 'photoapp/base.html' %}
+
+{% block body %}
+    {% for tag in tags %}
+        <div class="alert alert-primary">
+            <h2 id="id-tag{{ forloop.counter }}" data-row-number="#id-row{{ forloop.counter }}" class="text-center">
+                <a href="{% url 'photo:tag' tag.slug %}">{{ tag.name }}</a>
+            </h2>
+        </div>
+    {% endfor %}
+{% endblock body %}

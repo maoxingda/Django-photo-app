@@ -1,45 +1,64 @@
-'''Photo app generic views'''
-
-from django.shortcuts import get_object_or_404
-
-from django.core.exceptions import PermissionDenied
-
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+"""Photo app generic views"""
+from copy import copy
 
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
+from django.utils.datastructures import MultiValueDict
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
-from .models import Photo
+from .forms import PhotoModelForm
+from .models import Photo, CnTaggedItem, CnTag
+
 
 class PhotoListView(ListView):
-    
-    model = Photo     
+    model = Photo
 
-    template_name = 'photoapp/list.html'
+    template_name = 'photoapp/photo-list.html'
 
     context_object_name = 'photos'
 
 
 class PhotoTagListView(PhotoListView):
-    
-    template_name = 'photoapp/taglist.html'
-    
-    # Custom function
+    template_name = 'photoapp/photo-tag-list.html'
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.tag_name = None
+
     def get_tag(self):
         return self.kwargs.get('tag')
 
     def get_queryset(self):
-        return self.model.objects.filter(tags__slug=self.get_tag())
-    
+        queryset = self.model.objects.filter(tags__slug=self.get_tag())
+        self.tag_name = CnTag.objects.get(slug=self.get_tag())
+        return queryset
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["tag"] = self.get_tag()
+        context["tag"] = self.tag_name
         return context
-     
+
+
+class TagListView(ListView):
+    model = CnTaggedItem
+    template_name = 'photoapp/tag-list.html'
+    context_object_name = 'tags'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tags = set()
+
+        for tag_item in self.get_queryset():
+            tags.add(tag_item.tag)
+
+        context['tags'] = tags
+        return context
+
 
 class PhotoDetailView(DetailView):
-
     model = Photo
 
     template_name = 'photoapp/detail.html'
@@ -48,48 +67,78 @@ class PhotoDetailView(DetailView):
 
 
 class PhotoCreateView(LoginRequiredMixin, CreateView):
-
     model = Photo
-    
-    fields = ['title', 'description', 'image', 'tags']
-
+    form_class = PhotoModelForm
     template_name = 'photoapp/create.html'
-    
-    success_url = reverse_lazy('photo:list')
+    success_url = reverse_lazy('photo:tags')
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.object = None
+        self.new_request = None
+
+    def post(self, request, *args, **kwargs):
+        for img in self.request.FILES.getlist('image'):
+            new_files = MultiValueDict()
+            new_files['image'] = img
+            new_request = copy(request)
+            new_request.photos = new_files
+            self.new_request = new_request
+            super().post(new_request, *args, **kwargs)
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_form_kwargs(self):
+        """Return the keyword arguments for instantiating the form."""
+        kwargs = {
+            'initial': self.get_initial(),
+            'prefix': self.get_prefix(),
+        }
+
+        request = self.new_request if self.new_request else self.request
+
+        if request.method in ('POST', 'PUT'):
+            kwargs.update({
+                'data': request.POST,
+                'files': request.photos,
+            })
+
+        if hasattr(self, 'object'):
+            kwargs.update({'instance': self.object})
+        return kwargs
 
     def form_valid(self, form):
-
         form.instance.submitter = self.request.user
-        
-        return super().form_valid(form)
+        self.object = form.save()
+
 
 class UserIsSubmitter(UserPassesTestMixin):
 
     # Custom method
     def get_photo(self):
         return get_object_or_404(Photo, pk=self.kwargs.get('pk'))
-    
+
     def test_func(self):
-        
+
         if self.request.user.is_authenticated:
             return self.request.user == self.get_photo().submitter
         else:
             raise PermissionDenied('Sorry you are not allowed here')
 
+
 class PhotoUpdateView(UserIsSubmitter, UpdateView):
-    
     template_name = 'photoapp/update.html'
 
     model = Photo
 
     fields = ['title', 'description', 'tags']
-    
-    success_url = reverse_lazy('photo:list')
+
+    success_url = reverse_lazy('photo:tags')
+
 
 class PhotoDeleteView(UserIsSubmitter, DeleteView):
-    
     template_name = 'photoapp/delete.html'
 
     model = Photo
 
-    success_url = reverse_lazy('photo:list')
+    success_url = reverse_lazy('photo:tags')
