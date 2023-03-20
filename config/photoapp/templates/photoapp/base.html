@@ -27,9 +27,11 @@
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
   </head>
   <body>
-    {% include 'photoapp/navbar.html' %}
+    {% if user.is_authenticated %}
+        {% include 'photoapp/navbar.html' %}
+    {% endif %}
 
-    <div class="container mt-4">
+    <div class="container-fluid">
     {% block body %}
 
     {% endblock body %}

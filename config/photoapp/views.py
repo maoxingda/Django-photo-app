@@ -12,7 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 
 from .forms import PhotoModelForm
-from .models import Photo, CnTaggedItem, CnTag
+from .models import Photo, CnTag
 
 
 class PhotoListView(ListView):
@@ -50,15 +50,15 @@ class TagListView(ListView):
     context_object_name = 'tags'
 
     def get_context_data(self, **kwargs):
-        queryset = CnTag.objects.prefetch_related('taggit_taggeditem_items')
+        queryset = CnTag.objects.prefetch_related('tagged_items')
         context = super().get_context_data(**kwargs)
         tags = []
 
         for tag in queryset:
             if tag.slug == 'shi' or tag.slug == 'fou':
                 continue
-            if tag.taggit_taggeditem_items.exists():
-                object_id = tag.taggit_taggeditem_items.first().object_id
+            if tag.tagged_items.exists():
+                object_id = tag.tagged_items.first().object_id
                 yes_tag = Photo.objects.get(id=object_id).tags.filter(slug='shi').exists()
                 no_tag = Photo.objects.get(id=object_id).tags.filter(slug='fou').exists()
                 if yes_tag:
@@ -70,6 +70,11 @@ class TagListView(ListView):
                 tags.append({
                     'tag': tag,
                     'yes_no_tag': yn_tag,
+                })
+            else:
+                tags.append({
+                    'tag': tag,
+                    'yes_no_tag': '',
                 })
 
         context['tags'] = tags
@@ -134,6 +139,10 @@ class PhotoCreateView(LoginRequiredMixin, CreateView):
             kwargs.update({
                 'data': request.POST,
                 'files': request.photos,
+            })
+        elif request.method == 'GET':
+            kwargs['initial'].update({
+                'tags': request.GET.get('tags')
             })
 
         if hasattr(self, 'object'):

@@ -8,10 +8,17 @@
                 {{ tag }}
             </div>
             <div class="col-md-4 col-md-4 col-md-4 h3">
-                <a id="id-tag-shi" href="{% url 'photo:yes-no-tag' %}" onclick="return false;" class="mb-4 h-100">是</a>
+                <a id="id-tag-shi" href="{% url 'photo:yes-no-tag' %}" onclick="return false;" class="mb-4 h-100">
+                    <div id="id-tag-shi-loading" style="display: none;" class="spinner-border"></div>
+                    <i id="id-tag-shi-up" class="fa fa-thumbs-up" style="font-size:32px;color:red"></i>
+                </a>
+
             </div>
             <div class="col-md-4 col-md-4 col-md-4 h3">
-                <a id="id-tag-fou" href="{% url 'photo:yes-no-tag' %}" onclick="return false;" class="mb-4 h-100">否</a>
+                <a id="id-tag-fou" href="{% url 'photo:yes-no-tag' %}" onclick="return false;" class="mb-4 h-100">
+                    <div id="id-tag-fou-loading" style="display: none;" class="spinner-border"></div>
+                    <i id="id-tag-fou-down" class="fa fa-thumbs-down" style="font-size:32px;color:red"></i>
+                </a>
             </div>
         </div>
     </div>
@@ -26,23 +33,29 @@
                     photos.push(parseInt($(this).val()));
                 });
                 if (this.id === 'id-tag-shi') {
+                    $('#id-tag-shi-up').toggle();
+                    $('#id-tag-shi-loading').toggle();
                     $.post($(this).attr('href'), {
                         data: JSON.stringify({
                             tag: 'shi',
                             photos: photos
                         }),
                         success: function () {
-                            location.pathname = '/tagged/tags/no/';
+                            $('#id-tag-shi-up').toggle();
+                            $('#id-tag-shi-loading').toggle();
                         }
                     });
                 } else {
+                    $('#id-tag-fou-down').toggle();
+                    $('#id-tag-fou-loading').toggle();
                     $.post($(this).attr('href'), {
                         data: JSON.stringify({
                             tag: 'fou',
                             photos: photos
                         }),
                         success: function () {
-                            location.pathname = '/tagged/tags/no/';
+                            $('#id-tag-fou-down').toggle();
+                            $('#id-tag-fou-loading').toggle();
                         }
                     });
                 }

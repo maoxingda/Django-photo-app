@@ -39,12 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # 3rd party apps
-    'taggit',
+    # 第三方应用
+    # 'taggit', 按API文档说明，使用了自己的Tag模型就不能注册taggit应用，否则会使用默认的模型
     'crispy_forms',
     'django_extensions',
 
-    # Custom apps
+    # 自己开发的应用
     'photoapp',
     'users',
 ]
