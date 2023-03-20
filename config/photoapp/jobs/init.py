@@ -14,6 +14,8 @@ class Job(BaseJob):
     help = "初始化数据"
 
     def execute(self):
+        CnTag(name='是').save()
+        CnTag(name='否').save()
         for (root, dirs, files) in os.walk(os.getcwd() + '/pic', topdown=True):
             user = User.objects.get(id=2)
             for file in files:
