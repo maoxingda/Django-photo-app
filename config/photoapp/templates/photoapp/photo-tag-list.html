@@ -41,8 +41,10 @@
                             photos: photos
                         }),
                         success: function () {
-                            $('#id-tag-shi-up').toggle();
-                            $('#id-tag-shi-loading').toggle();
+                            setTimeout(function () {
+                                $('#id-tag-shi-up').toggle();
+                                $('#id-tag-shi-loading').toggle();
+                            }, 800);
                         }
                     });
                 } else {
@@ -54,8 +56,10 @@
                             photos: photos
                         }),
                         success: function () {
-                            $('#id-tag-fou-down').toggle();
-                            $('#id-tag-fou-loading').toggle();
+                            setTimeout(function () {
+                                $('#id-tag-fou-down').toggle();
+                                $('#id-tag-fou-loading').toggle();
+                            }, 800);
                         }
                     });
                 }
