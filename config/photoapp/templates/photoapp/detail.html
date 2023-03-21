@@ -15,7 +15,7 @@
             <img src="{{ photo.image.url }}" alt="" width="100%"/>
         </div>
         <div class="col-md-2">
-            <ul class="list-group list-group-horizontal-lg list-unstyled py-4">
+            <ul class="list-group list-unstyled">
                 {% for tag in photo.tags.all %}
                     {% if tag.slug != 'shi' and tag.slug != 'fou' %}
                         <li><a href="{% url 'photo:tag' tag.slug %}"
