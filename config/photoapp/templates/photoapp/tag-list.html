@@ -5,17 +5,17 @@
         <div class="alert alert-primary">
             <div class="row">
                 <input id="tag-{{ forloop.counter }}" name="{{ tag_info.tag.name }}" type="text" value="{{ tag_info.yes_no_tag.name }}" hidden />
-                <div class="col-md-4 col-md-4 col-md-4 h3">
+                <div class="col-4 h3">
                     <a href="{% url 'photo:tag' tag_info.tag.slug %}">{{ tag_info.tag.name }}</a>
                 </div>
-                <div class="col-md-4 col-md-4 col-md-4 h3">
+                <div class="col-4 h3">
                     {% if tag_info.yes_no_tag.slug == 'shi' %}
                         <i class="fa fa-thumbs-up" style="font-size:32px;color:red"></i>
                     {% elif tag_info.yes_no_tag.slug == 'fou' %}
                         <i class="fa fa-thumbs-down" style="font-size:32px;color:#000000"></i>
                     {% endif %}
                 </div>
-                <div class="col-md-4 col-md-4 col-md-4 h3">
+                <div class="col-4 h3">
                     <a href="{% url 'photo:create' %}?tags={{ tag_info.tag.name }}">添加</a>
                 </div>
             </div>
@@ -23,12 +23,14 @@
     {% endfor %}
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.16.9/dist/xlsx.full.min.js"></script>
     <script>
+        const navbar = $('ul.navbar-nav');
+        navbar.append('&emsp;&emsp;');
         const nav_item_export = $('<li class="nav-item"></li>')
         const btn_export = $('<a id="id_btn_export" class="nav-link active h6" href="#" onclick="return false;">导出</a>');
         nav_item_export.append(btn_export);
         $(function () {
             if (location.pathname === '/') {
-                $('ul.navbar-nav').append(nav_item_export);
+                navbar.append(nav_item_export);
             }
         });
 

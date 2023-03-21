@@ -16,6 +16,9 @@ from .models import Photo, CnTag
 
 
 class PhotoListView(ListView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     model = Photo
 
     template_name = 'photoapp/photo-list.html'
